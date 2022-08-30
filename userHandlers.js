@@ -1,7 +1,7 @@
 const database = require("./database");
 
 const getUsers = (req, res) => {
-  const initialSql = "select * from users";
+  const initialSql = "SELECT * FROM users";
   const where = [];
 
 if (req.query.language != null) {
@@ -23,7 +23,7 @@ if (req.query.city != null){
       .query(
         where.reduce(
         (sql, { column, operator }, index) =>
-          `${sql} ${index === 0 ? "where" : "and"} ${column} ${operator} ?`,
+          `${sql} ${index === 0 ? "WHERE" : "AND"} ${column} ${operator} ?`,
         initialSql
       ),
       where.map(({ value }) => value)
@@ -41,7 +41,7 @@ if (req.query.city != null){
     const id = parseInt(req.params.id);
   
     database
-      .query("select * from users where id = ?", [id])
+      .query("SELECT * FROM users WHERE id = ?", [id])
       .then(([users]) => {
         if (users[0] != null) {
           res.json(users[0]);
@@ -78,7 +78,7 @@ if (req.query.city != null){
   
     database
       .query(
-        "update users set firstname = ?, lastname = ?, email = ?, city = ?, language = ? where id = ?",
+        "UPDATE users SET firstname = ?, lastname = ?, email = ?, city = ?, language = ? WHERE id = ?",
         [firstname, lastname, email, city, language, id]
       )
       .then(([result]) => {
@@ -98,7 +98,7 @@ if (req.query.city != null){
     const id = parseInt(req.params.id);
   
     database
-      .query("delete from users where id = ?", [id])
+      .query("DELETE FROM users WHERE id = ?", [id])
       .then(([result]) => {
         if (result.affectedRows === 0) {
           res.status(404).send("Not Found");

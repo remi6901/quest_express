@@ -1,7 +1,7 @@
 const database = require("./database");
 
 const getMovies = (req, res) => {
-  const initialSql = "select * from movies";
+  const initialSql = "SELECT * FROM movies";
   const where = [];
 
   if (req.query.color != null) {
@@ -23,7 +23,7 @@ const getMovies = (req, res) => {
     .query(
       where.reduce(
         (sql, { column, operator }, index) =>
-          `${sql} ${index === 0 ? "where" : "and"} ${column} ${operator} ?`,
+          `${sql} ${index === 0 ? "WHERE" : "AND"} ${column} ${operator} ?`,
         initialSql
       ),
       where.map(({ value }) => value)
@@ -41,7 +41,7 @@ const getMovieById = (req, res) => {
   const id = parseInt(req.params.id);
 
   database
-    .query("select * from movies where id = ?", [id])
+    .query("SELECT * FROM movies WHERE id = ?", [id])
     .then(([movies]) => {
       if (movies[0] != null) {
         res.json(movies[0]);
@@ -78,7 +78,7 @@ const updateMovie = (req, res) => {
 
   database
     .query(
-      "update movies set title = ?, director = ?, year = ?, color = ?, duration = ? where id = ?",
+      "UPDATE movies SET title = ?, director = ?, year = ?, color = ?, duration = ? WHERE id = ?",
       [title, director, year, color, duration, id]
     )
     .then(([result]) => {
@@ -98,7 +98,7 @@ const deleteMovie = (req, res) => {
   const id = parseInt(req.params.id);
 
   database
-    .query("delete from movies where id = ?", [id])
+    .query("DELETE FROM movies WHERE id = ?", [id])
     .then(([result]) => {
       if (result.affectedRows === 0) {
         res.status(404).send("Not Found");
