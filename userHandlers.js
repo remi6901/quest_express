@@ -41,7 +41,7 @@ if (req.query.city != null){
     const id = parseInt(req.params.id);
   
     database
-      .query("SELECT * FROM users WHERE id = ?", [id])
+      .query("SELECT id, firstname, lastname, email, city, language FROM users WHERE id = ?", [id])
       .then(([users]) => {
         if (users[0] != null) {
           res.json(users[0]);
@@ -54,6 +54,27 @@ if (req.query.city != null){
         res.status(500).send("Error retrieving data from database");
       });
   };
+
+  const getUserByEmailWithPasswordAndPassToNext = (req, res, next) => {
+    const { email } = req.body;
+  
+    database
+      .query("SELECT * FROM users WHERE email = ?", [email])
+      .then(([users]) => {
+        if (users[0] != null) {
+          req.user = users[0];
+  
+          next();
+        } else {
+          res.sendStatus(401);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send("Error retrieving data from database");
+      });
+  };
+
 
   const postUser = (req, res) => {
     const { firstname, lastname, email, city, language, hashedPassword } =
@@ -116,6 +137,7 @@ if (req.query.city != null){
   module.exports = {
     getUsers,
     getUserById,
+    getUserByEmailWithPasswordAndPassToNext,
     postUser,
     updateUser,
     deleteUser,
